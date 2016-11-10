@@ -58,7 +58,7 @@
     "knex": "0.12.6",
     "pg": "6.1.0",
     "relish": "0.2.4",
-    "savitri-shared": "https://github.com/savitri/shared.git",
+    "savitri-shared": "https://github.com/savitri/shared.git#1.0.1",
     "vision": "4.1.0"
   },
   "devDependencies": {
