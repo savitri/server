@@ -14,16 +14,22 @@ export class ReadController extends BaseController {
         const params: Params = request.params;
         const query: Query = request.query;
 
-        const lines = ReadHelper.getSection(this.pg, query, params);
+        const queries = ReadHelper.getSection(this.pg, query, params);
 
-        return reply(lines);
+        Promise.all(queries).then(results => {
+
+            return reply({
+                canto: results[0],
+                section: results[1]
+            });
+        });
     }
 
     replySection = (request: Request, reply: IReply) => {
 
         const preParams: PreParams = request.pre;
 
-        if (!preParams.section) {
+        if (!preParams.sectionCanto) {
 
             const error = {
                 errors: [Boom.notFound("Section not found").output.payload],
@@ -33,12 +39,12 @@ export class ReadController extends BaseController {
             return reply(error).code(404);
         }
 
-        const blog = {
-            data: preParams.section,
+        const section = {
+            data: preParams.sectionCanto,
             url: request.url.path
         };
 
-        return reply(blog);
+        return reply(section);
     }
 
     getSentence = (request: Request, reply: IReply) => {

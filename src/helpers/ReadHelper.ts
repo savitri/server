@@ -30,14 +30,22 @@ export class ReadHelper {
                 .first("id");
         };
 
-        return pg.table(Models.Section.table)
-            .select("sections.*", pg.raw("json_agg(sentences order by sentences.no) as sentences"))
+        const cantoQuery = pg.table(Models.Canto.table)
+            .where({
+                "cantos.book_id": bookId
+            })
+            .andWhere({ "cantos.no": params.canto }).first("heading", "title", "desc", "no");
+
+        const sectionQuery = pg.table(Models.Section.table)
+            .select("sections.heading", "sections.no", "sections.running_no", pg.raw("json_agg(sentences order by sentences.no) as sentences"))
             .innerJoin("sentences", "sentences.section_id", "sections.id")
             .where({
                 "sections.canto_id": cantoId
             })
             .andWhere({ "sections.no": params.section })
             .groupBy("sections.id").first();
+
+        return [cantoQuery, sectionQuery];
     };
 
     static getSentence = function (pg: Knex, query: Query, params: Params) {

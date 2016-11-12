@@ -47,8 +47,14 @@ suite("The read plugin", () => {
         server.inject(request, response => {
 
             expect(response.statusCode).to.equal(200);
-            const section: Models.ISection = JSON.parse(response.payload).data;
+            const data = JSON.parse(response.payload).data;
+
+            const section: Models.ISection = data.section;
+            expect(section.no).to.equal(1);
             expect(section.running_no).to.equal(80);
+
+            const canto: Models.ICanto = data.canto;
+            expect(canto.no).to.equal(2);
 
             if (section.sentences) {
 
@@ -69,7 +75,9 @@ suite("The read plugin", () => {
         server.inject(request, response => {
 
             expect(response.statusCode).to.equal(200);
-            const section: Models.ISection = JSON.parse(response.payload).data;
+            const data = JSON.parse(response.payload).data;
+            const section: Models.ISection = data.section;
+            expect(section.no).to.equal(1);
             expect(section.running_no).to.equal(79);
 
             if (section.sentences) {

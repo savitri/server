@@ -17,7 +17,7 @@ export interface Query {
 }
 
 export interface PreParams {
-    section?: Models.ISection;
+    sectionCanto?: { section: Models.ISection, canto: Models.ICanto };
     sentence?: Models.ISentence;
 }
 
@@ -51,7 +51,7 @@ exports.register = (server: Server, options: any, next: Function) => {
             pre: [
                 {
                     method: controller.getSection,
-                    assign: "section"
+                    assign: "sectionCanto"
                 }
             ]
         }

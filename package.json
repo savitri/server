@@ -10,7 +10,7 @@
     "test": "lab -v -T config/test-transform.js -I '__core-js_shared__'",
     "test-coverage": "lab -c -S -T config/test-transform.js --coverage-path src -r html -o test/coverage.html && open test/coverage.html",
     "dev": "nodemon --watch 'src/**/*.ts' --exec nodejs-dashboard ts-node -L server.ts",
-    "prepare-debug-test": "rm -r build && tsc && cp -r test/fixtures build/test",
+    "prepare-debug-test": "rm -r build && npm run build && cp -r test/fixtures build/test",
     "prepare-debug-test-old": "rm -rf build/test && tsc && cp -r data build && cp -r test/fixtures build/test",
     "build": "tsc",
     "compile": "tsc --noEmit",
@@ -58,7 +58,7 @@
     "knex": "0.12.6",
     "pg": "6.1.0",
     "relish": "0.2.4",
-    "savitri-shared": "https://github.com/savitri/shared.git#1.0.1",
+    "savitri-shared": "https://github.com/savitri/shared.git#1.0.4",
     "vision": "4.1.0"
   },
   "devDependencies": {
