@@ -5,7 +5,7 @@ import { script } from "lab";
 
 import { Models } from "savitri-shared";
 const LabbableServer = require("../../server");
-const newPost = require("../fixtures/newPost.json");
+import { newPost, existingPost } from "../fixtures/new-post";
 import { POSTS_PER_PAGE } from "../../src/controllers/PostsController";
 
 const lab = exports.lab = script();
@@ -53,7 +53,7 @@ suite("The posts plugin", () => {
 
             firstPageLastPost = posts[POSTS_PER_PAGE - 1];
 
-            expect(new Date(posts[0].published_at)).to.be.above(new Date(firstPageLastPost.published_at));
+            expect(posts[POSTS_PER_PAGE - 2].number).to.be.above(firstPageLastPost.number);
 
             return done();
         });
@@ -75,8 +75,6 @@ suite("The posts plugin", () => {
             expect(posts.length).to.equal(POSTS_PER_PAGE);
 
             expect(posts[0].blog_id).to.equal(1);
-
-            expect(new Date(posts[0].published_at)).to.be.below(new Date(firstPageLastPost.published_at));
 
             expect(posts[0].number).to.be.below(firstPageLastPost.number);
 
@@ -158,12 +156,12 @@ suite("The posts plugin", () => {
         });
     });
 
-    test.skip("successfully creates a new post", done => {
+    test("successfully creates a new post", done => {
 
         const request = {
             method: "POST",
-            url: "/blogs/flower-blog/posts",
-            payload: newPost[0]
+            url: "/blogs/light-of-supreme/posts",
+            payload: newPost
         };
 
         server.inject(request, response => {
@@ -180,12 +178,12 @@ suite("The posts plugin", () => {
         });
     });
 
-    test.skip("generates a unique slug for each post", done => {
+    test("generates a unique slug for each post", done => {
 
         const request = {
             method: "POST",
             url: "/blogs/flower-blog/posts",
-            payload: newPost[0]
+            payload: newPost
         };
 
         server.inject(request, response => {
@@ -202,17 +200,16 @@ suite("The posts plugin", () => {
         });
     });
 
-    test.skip("successfully updates a post", done => {
+    test("successfully updates a post", done => {
 
         const update = {
-            content: "Changed text.",
-            excerpt: "Updated excerpt."
+            txt: "Changed text"
         };
 
         const request = {
             method: "PATCH",
-            url: "/blogs/flower-blog/posts/the-post-title",
-            payload: Object.assign(newPost[1], update)
+            url: "/blogs/light-of-supreme/posts/the-post-title",
+            payload: Object.assign(existingPost, update)
         };
 
         server.inject(request, response => {
@@ -221,9 +218,7 @@ suite("The posts plugin", () => {
 
             const post: Models.IPost = JSON.parse(response.payload).data;
 
-            expect(post.txt).to.equal(update.content);
-
-            // expect(post.excerpt).to.equal(update.excerpt);
+            expect(post.txt).to.equal(update.txt);
 
             return done();
         });
@@ -243,11 +238,26 @@ suite("The posts plugin", () => {
         return done();
     });
 
-    test.skip("successfully deletes a post", done => {
+    test("successfully deletes first post", done => {
 
         const request = {
             method: "DELETE",
-            url: "/blogs/flower-blog/posts/the-post-title"
+            url: "/blogs/light-of-supreme/posts/the-post-title"
+        };
+
+        server.inject(request, response => {
+
+            expect(response.statusCode).to.equal(200);
+
+            return done();
+        });
+    });
+
+    test("successfully deletes second post", done => {
+
+        const request = {
+            method: "DELETE",
+            url: "/blogs/light-of-supreme/posts/the-post-title-1"
         };
 
         server.inject(request, response => {
@@ -261,5 +271,20 @@ suite("The posts plugin", () => {
 
 after(done => {
 
-    return done();
+    pg("posts")
+        .delete()
+        .where({
+            blog_id: 1,
+            slug: "the-post-title"
+        })
+        .then(() => {
+
+            pg("posts").delete()
+                .where({
+                    blog_id: 1,
+                    slug: "the-post-title-1"
+                }).then(() => done())
+                .catch(done);
+        })
+        .catch(done);
 });

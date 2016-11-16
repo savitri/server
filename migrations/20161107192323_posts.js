@@ -13,7 +13,7 @@ exports.up = function (knex, Promise) {
         table.text("subtitle");
         table.text("txt").notNullable();
         table.text("excerpt");
-        table.string("script");
+        table.string("script").notNullable();
         table.integer("series_id");
         table.jsonb("comments");
         table.jsonb("tags");

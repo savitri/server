@@ -146,11 +146,11 @@ export class PostsController extends BaseController {
         const post = new Models.Post(request.payload, false);
 
         this.table()
-            .select("url")
+            .select("slug")
             .where({
                 blog_id: post.model.blog_id
             })
-            .andWhere("url", "like", `${post.slug}%`)
+            .andWhere("slug", "like", `${post.slug}%`)
             .orderBy("number", "desc")
             .then((results: Models.IPost[]) => {
 
@@ -191,10 +191,13 @@ export class PostsController extends BaseController {
                     return parseInt(a.substr(a.lastIndexOf("-") + 1)) > parseInt(b.substr(b.lastIndexOf("-") + 1)) ? 1 : 0;
                 });
 
-                const lastSlug = sortedSlugs.pop();
+                const excludeDefaultSlug = sortedSlugs.slice(0, sortedSlugs.indexOf(post.slug))
+                    .concat(sortedSlugs.slice(sortedSlugs.indexOf(post.slug) + 1));
+
+                const lastSlug = excludeDefaultSlug.pop();
 
                 // get number of last slug and add 1
-                let url: string;
+                let slug: string;
 
                 if (lastSlug) {
 
@@ -202,19 +205,19 @@ export class PostsController extends BaseController {
 
                     if (isNaN(lastIndex)) {
 
-                        url = post.slug + "-1";
+                        slug = post.slug + "-1";
                     }
                     else {
 
-                        url = post.slug + "-" + (lastIndex + 1);
+                        slug = post.slug + "-" + (lastIndex + 1);
                     }
                 }
                 else {
 
-                    url = post.slug + "-1";
+                    slug = post.slug + "-1";
                 }
 
-                return reply(url);
+                return reply(slug);
             });
     }
 
@@ -247,7 +250,7 @@ export class PostsController extends BaseController {
                 .update(request.payload, "*")
                 .where({
                     blog_id: blog.id,
-                    url: params.postSlug
+                    slug: params.postSlug
                 })
                 .then(results => reply(results[0]));
         }
@@ -267,14 +270,17 @@ export class PostsController extends BaseController {
         if (blog) {
 
             this.table()
-                .delete()
                 .where({
                     blog_id: blog.id,
-                    url: params.postSlug
+                    slug: params.postSlug
                 })
-                .then(deletedCount => {
+                .update({
+                    status: "deleted",
+                    deleted_at: new Date()
+                })
+                .then(results => {
 
-                    if (!deletedCount) {
+                    if (!results) {
 
                         const error = {
                             errors: [Boom.notFound("Post not found").output.payload],
