@@ -31,7 +31,7 @@ before(done => {
     });
 });
 
-suite("The blog plugin", () => {
+suite("The blogs plugin", () => {
 
     test("gets all blogs in the correct order", done => {
 

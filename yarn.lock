@@ -1258,10 +1258,10 @@ http-status@^0.2.3:
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/http-status/-/http-status-0.2.3.tgz#b8fba208d6723d0fe0de5afec3ae624f6bae03db"
 
-"https://github.com/savitri/shared.git#1.0.4":
+"https://github.com/savitri/shared.git#1.0.7":
   name savitri-shared
-  version "1.0.4"
-  resolved "https://github.com/savitri/shared.git#7f9eebaddfa5babbf4cdadbe0dc8bb97743f359e"
+  version "1.0.7"
+  resolved "https://github.com/savitri/shared.git#ad160b95779791f7504e86242108217e01c22611"
   dependencies:
     diacritics "^1.2.3"
     joi "^9.2.0"
@@ -2479,9 +2479,9 @@ sanscript@^0.0.2:
   version "0.0.2"
   resolved "https://registry.yarnpkg.com/sanscript/-/sanscript-0.0.2.tgz#5d0384e63475c61986da385fbccce3a15ec3b3e6"
 
-"savitri-shared@https://github.com/savitri/shared.git#1.0.1":
-  version "1.0.1"
-  resolved "https://github.com/savitri/shared.git#6ae2a94fd49f55fb9bf87b87cba0f77cfd1b414f"
+"savitri-shared@https://github.com/savitri/shared.git#1.0.6":
+  version "1.0.6"
+  resolved "https://github.com/savitri/shared.git#d23aaeaa44d196c09610177c92035947cd402d7a"
   dependencies:
     diacritics "^1.2.3"
     joi "^9.2.0"

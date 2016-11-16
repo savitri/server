@@ -5,7 +5,7 @@ import { Models } from "savitri-shared";
 import { BaseController } from "./BaseController";
 import { Params, Query, PreParams, PreResponses } from "../routes/posts";
 
-const POSTS_PER_PAGE = 10;
+export const POSTS_PER_PAGE = 20;
 
 export class PostsController extends BaseController {
     returnPost = (request: Request, reply: IReply) => {
@@ -75,8 +75,10 @@ export class PostsController extends BaseController {
         if (blog) {
 
             let query = this.table()
-                .whereIn("blog_id", blog.id)
-                .andWhere({ status: "published" });
+                .where({
+                    blog_id: blog.id,
+                    status: "published"
+                });
 
             if (queryParams.tag) {
 
@@ -85,7 +87,7 @@ export class PostsController extends BaseController {
 
             if (queryParams.page && queryParams.page > 0) {
 
-                query = query.offset(queryParams.page * 10);
+                query = query.offset((queryParams.page - 1) * POSTS_PER_PAGE);
             }
 
             return reply(query.select("*").limit(POSTS_PER_PAGE).orderBy("published_at", "desc"));

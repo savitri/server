@@ -6,6 +6,7 @@ import { script } from "lab";
 import { Models } from "savitri-shared";
 const LabbableServer = require("../../server");
 const newPost = require("../fixtures/newPost.json");
+import { POSTS_PER_PAGE } from "../../src/controllers/PostsController";
 
 const lab = exports.lab = script();
 
@@ -31,7 +32,7 @@ before(done => {
     });
 });
 
-suite("The new post plugin", () => {
+suite("The posts plugin", () => {
 
     test("returns first page of posts from The Light of the Supreme", done => {
 
@@ -46,13 +47,13 @@ suite("The new post plugin", () => {
 
             const posts: Models.IPost[] = JSON.parse(response.payload).data;
 
-            expect(posts.length).to.equal(10);
+            expect(posts.length).to.equal(POSTS_PER_PAGE);
 
             expect(posts[0].blog_id).to.equal(1);
 
-            firstPageLastPost = posts[9];
+            firstPageLastPost = posts[POSTS_PER_PAGE - 1];
 
-            expect(posts[0].published_at).to.be.above(firstPageLastPost.published_at);
+            expect(new Date(posts[0].published_at)).to.be.above(new Date(firstPageLastPost.published_at));
 
             return done();
         });
@@ -62,7 +63,7 @@ suite("The new post plugin", () => {
 
         const request = {
             method: "GET",
-            url: "/blogs/light-of-supreme/posts?page=1"
+            url: "/blogs/light-of-supreme/posts?page=2"
         };
 
         server.inject(request, response => {
@@ -71,11 +72,13 @@ suite("The new post plugin", () => {
 
             const posts: Models.IPost[] = JSON.parse(response.payload).data;
 
-            expect(posts.length).to.equal(10);
+            expect(posts.length).to.equal(POSTS_PER_PAGE);
 
             expect(posts[0].blog_id).to.equal(1);
 
-            expect(posts[0].published_at).to.be.below(firstPageLastPost.published_at);
+            expect(new Date(posts[0].published_at)).to.be.below(new Date(firstPageLastPost.published_at));
+
+            expect(posts[0].number).to.be.below(firstPageLastPost.number);
 
             return done();
         });
@@ -94,7 +97,7 @@ suite("The new post plugin", () => {
 
             const posts: Models.IPost[] = JSON.parse(response.payload).data;
 
-            expect(posts.length).to.equal(10);
+            expect(posts.length).to.equal(POSTS_PER_PAGE);
 
             expect(posts[0].blog_id).to.equal(6);
 

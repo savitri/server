@@ -25,7 +25,7 @@ before(done => {
     });
 });
 
-suite("The edition plugin", () => {
+suite("The editions plugin", () => {
 
     test("gets the list of editions", done => {
 
